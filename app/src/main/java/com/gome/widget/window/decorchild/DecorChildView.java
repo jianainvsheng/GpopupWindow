@@ -2,11 +2,14 @@ package com.gome.widget.window.decorchild;
 
 import android.app.Activity;
 import android.content.Context;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+
 import com.gome.widget.R;
 import com.gome.widget.window.IDecorWindow;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,42 +21,39 @@ public class DecorChildView extends RelativeLayout implements IDecorWindow {
 
     private ViewGroup mDecorView;
 
-    private IDecorWindow mDecorWindow;
-
-    private Map<Class<?> , DecorChildRecord> mapViews = new HashMap<>();
+    private Map<Class<?>, DecorChildRecord> mapViews = new HashMap<>();
 
     public DecorChildView(Context context) {
         super(context);
-        this.mDecorView = ((Activity)context).findViewById(android.R.id.content);
+        this.mDecorView = ((Activity) context).findViewById(android.R.id.content);
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
         );
         setLayoutParams(params);
-        this.mDecorView.addView(this,mDecorView.getChildCount());
-        this.mDecorView.setTag(R.id.decor_view_window_id,this);
+        this.mDecorView.addView(this, mDecorView.getChildCount());
+        this.mDecorView.setTag(R.id.decor_view_window_id, this);
         this.setBackgroundColor(getResources().getColor(android.R.color.transparent));
     }
 
     @Override
     public void attach(IDecorWindow popupWindow) {
 
-        this.mDecorWindow = popupWindow;
-        this.mDecorWindow.attach(this);
+        popupWindow.attach(this);
     }
 
     @Override
-    public void showPopupWindow(View view,Class<?> cls,int level) {
+    public void showPopupWindow(View view, Class<?> cls, int level,IDecorWindow decorWindow) {
 
-        if(isPopupWindowShow(cls)){
+        if (isPopupWindowShow(cls)) {
             return;
         }
         checkDecorView();
-        if(mapViews.containsKey(cls)){
+        if (mapViews.containsKey(cls)) {
 
             DecorChildRecord record = mapViews.get(cls);
             removeView(record.mDecorChildView);
         }
-        if(view.getParent() != null){
+        if (view.getParent() != null) {
             ViewGroup parentView = (ViewGroup) view.getParent();
             parentView.removeView(view);
         }
@@ -61,7 +61,7 @@ public class DecorChildView extends RelativeLayout implements IDecorWindow {
 
         int width = ViewGroup.LayoutParams.WRAP_CONTENT;
         int height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        if(viewGroupParams != null){
+        if (viewGroupParams != null) {
             width = viewGroupParams.width;
             height = viewGroupParams.height;
         }
@@ -73,56 +73,62 @@ public class DecorChildView extends RelativeLayout implements IDecorWindow {
         record.mLevel = level;
         record.mDecorChildView = view;
         record.mCls = cls;
+        record.decorWindow = decorWindow;
         int childSize = getChildCount();
-        if(childSize <= 0){
+        if (childSize <= 0) {
             level = 0;
-        }else{
-            for(int i = childSize - 1 ; i >= 0 ; i--){
+        } else {
+            for (int i = childSize - 1; i >= 0; i--) {
                 View lastView = getChildAt(i);
                 DecorChildRecord lastChildRecord = (DecorChildRecord) lastView.getTag(R.id.decor_view_child_id);
-                if(lastChildRecord.isLevelLess(record)){
+                if (lastChildRecord.isLevelLess(record)) {
                     level = i + 1;
                     break;
                 }
-                if(i == 0){
+                if (i == 0) {
                     level = 0;
                 }
             }
         }
-        if(level > getChildCount()){
+        if (level > getChildCount()) {
             level = getChildCount();
         }
-        view.setTag(R.id.decor_view_child_id,record);
-        addView(view,level);
-        mapViews.put(cls,record);
+        view.setTag(R.id.decor_view_child_id, record);
+        addView(view, level);
+        mapViews.put(cls, record);
 
         StringBuffer buffer = new StringBuffer();
-        for(Map.Entry<Class<?>, DecorChildRecord> entry : mapViews.entrySet()){
+        for (Map.Entry<Class<?>, DecorChildRecord> entry : mapViews.entrySet()) {
             buffer.append("key : " + entry.getKey() +
-            " value : " + entry.getValue().mDecorChildView + " level :" +
+                    " value : " + entry.getValue().mDecorChildView + " level :" +
                     entry.getValue().mLevel);
         }
         System.out.println("=========map : " + buffer.toString());
     }
 
-    private void checkDecorView(){
-        if(this.mDecorView.indexOfChild(this) == -1){
-            this.mDecorView.addView(this,mDecorView.getChildCount());
-        }else if(this.mDecorView.indexOfChild(this) != mDecorView.getChildCount() -1){
+    private void checkDecorView() {
+        if (this.mDecorView.indexOfChild(this) == -1) {
+            this.mDecorView.addView(this, mDecorView.getChildCount());
+        } else if (this.mDecorView.indexOfChild(this) != mDecorView.getChildCount() - 1) {
             this.mDecorView.removeView(this);
-            this.mDecorView.addView(this,mDecorView.getChildCount());
+            this.mDecorView.addView(this, mDecorView.getChildCount());
         }
     }
 
     @Override
     public void hidePopupWindow(Class<?> cls) {
 
-        if(!isPopupWindowShow(cls)){
+        if (!isPopupWindowShow(cls)) {
             return;
         }
         DecorChildRecord record = mapViews.get(cls);
         removeView(record.mDecorChildView);
         mapViews.remove(record);
+    }
+
+    @Override
+    public void hidePopupWindow() {
+
     }
 
     @Override
@@ -133,11 +139,11 @@ public class DecorChildView extends RelativeLayout implements IDecorWindow {
     @Override
     public boolean isPopupWindowShow(Class<?> cls) {
 
-        if(!mapViews.containsKey(cls)){
+        if (!mapViews.containsKey(cls)) {
             return false;
         }
         DecorChildRecord record = mapViews.get(cls);
-        if(indexOfChild(record.mDecorChildView) == -1){
+        if (indexOfChild(record.mDecorChildView) == -1) {
             mapViews.remove(cls);
             return false;
         }
@@ -146,7 +152,7 @@ public class DecorChildView extends RelativeLayout implements IDecorWindow {
 
     @Override
     public int getViewCurentLevel(Class<?> cls) {
-        if(mapViews.containsKey(cls)){
+        if (mapViews.containsKey(cls)) {
             DecorChildRecord record = mapViews.get(cls);
             return indexOfChild(record.mDecorChildView);
         }
@@ -155,32 +161,94 @@ public class DecorChildView extends RelativeLayout implements IDecorWindow {
 
     @Override
     public int getViewLevel(Class<?> cls) {
-        if(mapViews.containsKey(cls)){
+        if (mapViews.containsKey(cls)) {
             DecorChildRecord record = mapViews.get(cls);
             return record.mLevel;
         }
         return -1;
     }
 
-    class DecorChildRecord{
+    @Override
+    public void setOutsideTouchable(boolean outCanTouch, Class<?> cls) {
 
-        public View mDecorChildView;
+        if (mapViews.containsKey(cls)) {
+            DecorChildRecord record = mapViews.get(cls);
+            record.isOutsideCanTouch = outCanTouch;
+        }
+    }
 
-        public int mLevel = -1;
+    @Override
+    public void setOutsideClickHide(boolean outClickHide, Class<?> cls) {
+        if (mapViews.containsKey(cls)) {
+            DecorChildRecord record = mapViews.get(cls);
+            record.isOutsideClickHide = outClickHide;
+        }
+    }
 
-        public Class<?> mCls;
+    private boolean isOutsizeClickHide() {
 
-        public boolean isLevelLess(DecorChildRecord record){
+        boolean isOutsizeClickHide = false;
+        for (Map.Entry<Class<?>, DecorChildRecord> entry : mapViews.entrySet()) {
 
-            if(this.mLevel < 0 ||
-                    this.mLevel < record.mLevel){
+            DecorChildRecord record = entry.getValue();
+            if(record.isOutsideClickHide && isPopupWindowShow(record.mCls)){
+                record.decorWindow.hidePopupWindow();
+                isOutsizeClickHide = true;
+            }
+        }
+        return isOutsizeClickHide;
+    }
+
+    private boolean isOutsideCanTouchable() {
+
+        for (Map.Entry<Class<?>, DecorChildRecord> entry : mapViews.entrySet()) {
+            DecorChildRecord record = entry.getValue();
+            if(!record.isOutsideCanTouch && isPopupWindowShow(record.mCls)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+        boolean isTouch = super.onTouchEvent(event);
+        if(isOutsizeClickHide()){
+            return true;
+        }
+        if(!isOutsideCanTouchable()){
+
+            return true;
+        }
+        return isTouch;
+    }
+
+    class DecorChildRecord {
+
+        View mDecorChildView;
+
+        int mLevel = -1;
+
+        Class<?> mCls;
+
+        boolean isOutsideCanTouch = true;
+
+        boolean isOutsideClickHide = false;
+
+        IDecorWindow decorWindow;
+
+        boolean isLevelLess(DecorChildRecord record) {
+
+            if (this.mLevel < 0 ||
+                    this.mLevel < record.mLevel) {
                 return true;
             }
-            if(this.mLevel == record.mLevel){
+            if (this.mLevel == record.mLevel) {
 
                 throw new NullPointerException(record.mCls.getSimpleName() + " 设置的level : " + record.mLevel
 
-                     + "与 " + this.mCls.getSimpleName() + "设置的 level ： "+ this.mLevel + "一样"
+                        + "与 " + this.mCls.getSimpleName() + "设置的 level ： " + this.mLevel + "一样"
                 );
             }
             return false;

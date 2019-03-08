@@ -54,14 +54,18 @@ public abstract class BasePopupHelper<B extends BasePopupBuilder> {
     /**
      * 添加的视图被创建，对Y轴的矢量修改
      * @param decorWindow
+     * @param longitudinalView
+     * @return
      */
-    public abstract int postVectorY(BasePopupWindow decorWindow);
+    public abstract int postVectorY(BasePopupWindow decorWindow,View longitudinalView);
 
     /**
      * 添加的视图被创建，对X轴的矢量修改
      * @param decorWindow
+     * @param longitudinalView
+     * @return
      */
-    public abstract int postVectorX(BasePopupWindow decorWindow);
+    public abstract int postVectorX(BasePopupWindow decorWindow,View longitudinalView);
 
     /**
      * 展示
@@ -95,4 +99,6 @@ public abstract class BasePopupHelper<B extends BasePopupBuilder> {
 
         return mContentView;
     }
+
+
 }

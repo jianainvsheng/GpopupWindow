@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.gome.widget.test.widget.TestLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     >
 
+    <com.gome.widget.test.widget.TestLayout
+
+        android:id="@+id/test_layout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        >
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -13,10 +19,19 @@
         android:textSize="18dp"
         android:textColor="#000000"
         android:text="popup"
-        android:layout_centerHorizontal="true"
+
         android:layout_marginTop="50dp"
         />
+    </com.gome.widget.test.widget.TestLayout>
 
+    <com.gome.widget.test.widget.TestLayout
+
+        android:id="@+id/test_layout2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30dp"
+        >
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -25,10 +40,9 @@
         android:textColor="#000000"
         android:onClick="onclick"
         android:text="测试右popup"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="30dp"
-        />
 
+        />
+    </com.gome.widget.test.widget.TestLayout>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -67,4 +81,12 @@
         android:layout_centerHorizontal="true"
         />
 
-</RelativeLayout>
+    <com.gome.widget.test.widget.TestLayout
+
+        android:id="@+id/test_layout3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#00000000"
+        >
+    </com.gome.widget.test.widget.TestLayout>
+</com.gome.widget.test.widget.TestLayout>

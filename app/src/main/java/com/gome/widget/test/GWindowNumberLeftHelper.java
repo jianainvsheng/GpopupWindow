@@ -27,12 +27,12 @@ public class GWindowNumberLeftHelper extends BasePopupHelper<BasePopupBuilder> {
     }
 
     @Override
-    public int postVectorY(BasePopupWindow decorWindow) {
+    public int postVectorY(BasePopupWindow decorWindow,View longitudinalView) {
         return - mTextNumber.getMeasuredHeight() + 20;
     }
 
     @Override
-    public int postVectorX(BasePopupWindow decorWindow) {
+    public int postVectorX(BasePopupWindow decorWindow,View longitudinalView) {
         return 0;
     }
 

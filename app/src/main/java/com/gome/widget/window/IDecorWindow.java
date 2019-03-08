@@ -20,13 +20,20 @@ public interface IDecorWindow {
      * @param view
      * @param cls
      * @param level
+     * @param decorWindow
      */
-    void showPopupWindow(View view, Class<?> cls, int level);
+    void showPopupWindow(View view, Class<?> cls, int level,IDecorWindow decorWindow);
+
+    /**
+     * 隐藏view
+     * @param cls
+     */
+    void hidePopupWindow(Class<?> cls);
 
     /**
      * 隐藏view
      */
-    void hidePopupWindow(Class<?> cls);
+    void hidePopupWindow();
 
     /**
      * 加载PopupWindow的控件
@@ -55,4 +62,19 @@ public interface IDecorWindow {
      * @return
      */
     int getViewLevel(Class<?> cls);
+
+    /**
+     * 设置window之外的区域是否可以触碰 默认为true
+     * @param outCanTouch
+     * @param cls
+     */
+    void setOutsideTouchable(boolean outCanTouch,Class<?> cls);
+
+    /**
+     * 设置window之外的区域点击隐藏window
+     * @param outClickHide
+     * @param cls
+     */
+    void setOutsideClickHide(boolean outClickHide ,Class<?> cls);
+
 }

@@ -24,6 +24,10 @@ public class BasePopupBuilder<B extends BasePopupBuilder<B>> {
 
     private int offY = 0;
 
+    private boolean isOutCanTouch = true;
+
+    private boolean isOutClickHide = false;
+
     private WindowEnum mWindowEnum = WindowEnum.WINDOW_LEFT;
 
     public B setData(Object data) {
@@ -62,6 +66,35 @@ public class BasePopupBuilder<B extends BasePopupBuilder<B>> {
         return (B)this;
     }
 
+    /**
+     * 设置window之外的区域是否可以触碰 默认为true
+     * @param outCanTouch
+     */
+    public B setOutsideTouchable(boolean outCanTouch){
+
+        this.isOutCanTouch = outCanTouch;
+        return (B) this;
+    }
+
+    /**
+     * 设置window之外的区域点击隐藏window
+     * @param outClickHide
+     */
+    public B setOutsideClickHide(boolean outClickHide){
+
+        this.isOutClickHide = outClickHide;
+        return (B) this;
+    }
+
+    public boolean getOutsideClickHide(){
+
+        return isOutClickHide;
+    }
+
+    public boolean getOutsideTouchable(){
+
+        return isOutCanTouch;
+    }
 
     public int getOffY() {
         return offY;

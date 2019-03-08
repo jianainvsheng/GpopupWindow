@@ -42,9 +42,11 @@ public class BasePopupWindow<B extends BasePopupBuilder<B>, H extends BasePopupH
     }
 
     @Override
-    public void showPopupWindow(View view, Class<?> cls, int level) {
+    public void showPopupWindow(View view, Class<?> cls, int level,IDecorWindow decorWindow) {
 
-        mDecorWindow.showPopupWindow(view, cls, level);
+        mDecorWindow.showPopupWindow(view, cls, level,decorWindow);
+        setOutsideClickHide(mBuilder.getOutsideClickHide(),cls);
+        setOutsideTouchable(mBuilder.getOutsideTouchable(),cls);
     }
 
     @Override
@@ -57,18 +59,14 @@ public class BasePopupWindow<B extends BasePopupBuilder<B>, H extends BasePopupH
         showPopupWindow(longitudinalView, mBuilder.getLevel());
     }
 
-    public void showPopupWindow(View longitudinalView, int level) {
+    public void showPopupWindow(final View longitudinalView, int level) {
         if (longitudinalView == null || isPopupWindowShow() || mHelper.canNotShowPopupWindow()) {
             return;
         }
-
         int height = getCorrectionHeight(longitudinalView);
-        System.out.println("=========height : " + height);
-
         final int[] startPosition = new int[2];
         longitudinalView.getLocationOnScreen(startPosition);
         startPosition[1] = startPosition[1] - height <= 0 ? 0: startPosition[1] - height;
-
         final View popupWindowView = this.mHelper.attachView(mBuilder, getDecorView(), this);
         if (popupWindowView == null) {
             throw new NullPointerException(this.getClass().getCanonicalName() + " 获取加载的popupWindwoView 为空");
@@ -82,13 +80,13 @@ public class BasePopupWindow<B extends BasePopupBuilder<B>, H extends BasePopupH
         windowEnum = windowEnum == null ? WindowEnum.WINDOW_LEFT : windowEnum;
         final WindowEnum wEnum = windowEnum;
         popupWindowView.setVisibility(View.INVISIBLE);
-        showPopupWindow(popupWindowView, mHelper.getClass(), level);
+        showPopupWindow(popupWindowView, mHelper.getClass(), level,this);
         final RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) popupWindowView.getLayoutParams();
         popupWindowView.post(new Runnable() {
             @Override
             public void run() {
-                int longitudinalY = startPosition[1] + mBuilder.getOffY() + mHelper.postVectorY(BasePopupWindow.this);
-                int longitudinalX = startPosition[0] + mBuilder.getOffX() + mHelper.postVectorX(BasePopupWindow.this);
+                int longitudinalY = startPosition[1] + mBuilder.getOffY() + mHelper.postVectorY(BasePopupWindow.this,longitudinalView);
+                int longitudinalX = startPosition[0] + mBuilder.getOffX() + mHelper.postVectorX(BasePopupWindow.this,longitudinalView);
                 int popupWidth = popupWindowView.getMeasuredWidth();
                 if (wEnum == WindowEnum.WINDOW_LEFT) {
                     params.topMargin = longitudinalY;
@@ -127,6 +125,7 @@ public class BasePopupWindow<B extends BasePopupBuilder<B>, H extends BasePopupH
         return height;
     }
 
+    @Override
     public void hidePopupWindow() {
         if (mHelper != null && mHelper.canNotHidePopupWindow()) {
             return;
@@ -182,6 +181,17 @@ public class BasePopupWindow<B extends BasePopupBuilder<B>, H extends BasePopupH
     @Override
     public int getViewLevel(Class<?> cls) {
         return mDecorWindow.getViewLevel(cls);
+    }
+
+    @Override
+    public void setOutsideTouchable(boolean outCanTouch, Class<?> cls) {
+        this.mDecorWindow.setOutsideTouchable(outCanTouch,cls);
+    }
+
+    @Override
+    public void setOutsideClickHide(boolean outClickHide, Class<?> cls) {
+
+        this.mDecorWindow.setOutsideClickHide(outClickHide,cls);
     }
 
     public boolean isPopupWindowShow() {
