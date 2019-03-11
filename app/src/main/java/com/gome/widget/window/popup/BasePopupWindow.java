@@ -49,11 +49,6 @@ public class BasePopupWindow<B extends BasePopupBuilder<B>, H extends BasePopupH
         setOutsideTouchable(mBuilder.getOutsideTouchable(),cls);
     }
 
-    @Override
-    public void hidePopupWindow(Class<?> cls) {
-        mDecorWindow.hidePopupWindow(cls);
-    }
-
     public void showPopupWindow(View longitudinalView) {
 
         showPopupWindow(longitudinalView, mBuilder.getLevel());
@@ -127,20 +122,27 @@ public class BasePopupWindow<B extends BasePopupBuilder<B>, H extends BasePopupH
 
     @Override
     public void hidePopupWindow() {
+
+        hidePopupWindow(mHelper.getClass());
+    }
+
+    @Override
+    public void hidePopupWindow(final Class<?> cls) {
+
         if (mHelper != null && mHelper.canNotHidePopupWindow()) {
             return;
         }
         if (isPopupWindowShow(mHelper.getClass())) {
-            int duration = mHelper.hidePopupWindowDuration();
+            int duration =  mHelper.hidePopupWindowDuration();
             if (duration > 0) {
                 this.mHelper.getContentView().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        hidePopupWindow(mHelper.getClass());
+                        mDecorWindow.hidePopupWindow(cls);
                     }
                 }, duration);
             } else {
-                hidePopupWindow(mHelper.getClass());
+                mDecorWindow.hidePopupWindow(cls);
             }
         }
     }

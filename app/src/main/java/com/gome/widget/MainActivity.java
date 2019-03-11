@@ -11,6 +11,7 @@ import com.gome.widget.test.GWindowCenterNumberHelper;
 import com.gome.widget.test.GWindowHelper;
 import com.gome.widget.test.GWindowNumberLeftHelper;
 import com.gome.widget.test.GWindowRightNumberHelper;
+import com.gome.widget.test.GWindowTopRightHelper;
 import com.gome.widget.test.widget.TestLayout;
 import com.gome.widget.window.popup.gwindow.GPopupWindow;
 import com.gome.widget.window.windowenum.WindowEnum;
@@ -65,6 +66,14 @@ public class MainActivity extends AppCompatActivity {
                     .setOffY(- view.getMeasuredHeight())
                     .setOutsideClickHide(true)
                     .showPopupView(view);
+        }else if(view.getId() == R.id.popup_top_right){
+            GPopupWindow.createPopupWindow(this, GWindowTopRightHelper.class)
+                    .setWindowEnum(WindowEnum.WINDOW_RIGHT)
+                    .setOffY(20)
+                    .setOffX(-30)
+                    .setOutsideClickHide(true)
+                    .showPopupView(view);
+
         }else if(view.getId() == R.id.bottom_right){
 
             GPopupWindow.createPopupWindow(this, GWindowNumberLeftHelper.class)

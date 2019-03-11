@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.gome.widget.test.widget.TestLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#00FF00"
+    >
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/center"
+        android:textSize="18dp"
+        android:textColor="#000000"
+        android:onClick="onclick"
+        android:text="右上角测试"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="30dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/center_view"
+        android:textSize="18dp"
+        android:textColor="#000000"
+        android:onClick="onclick"
+        android:text="右上角测试2"
+        android:layout_below="@+id/center"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="50dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        />
+</com.gome.widget.test.widget.TestLayout>

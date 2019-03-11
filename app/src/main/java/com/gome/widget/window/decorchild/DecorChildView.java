@@ -10,8 +10,11 @@ import android.widget.RelativeLayout;
 import com.gome.widget.R;
 import com.gome.widget.window.IDecorWindow;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by yangjian on 2019/3/6.
@@ -96,14 +99,6 @@ public class DecorChildView extends RelativeLayout implements IDecorWindow {
         view.setTag(R.id.decor_view_child_id, record);
         addView(view, level);
         mapViews.put(cls, record);
-
-        StringBuffer buffer = new StringBuffer();
-        for (Map.Entry<Class<?>, DecorChildRecord> entry : mapViews.entrySet()) {
-            buffer.append("key : " + entry.getKey() +
-                    " value : " + entry.getValue().mDecorChildView + " level :" +
-                    entry.getValue().mLevel);
-        }
-        System.out.println("=========map : " + buffer.toString());
     }
 
     private void checkDecorView() {
@@ -188,8 +183,12 @@ public class DecorChildView extends RelativeLayout implements IDecorWindow {
     private boolean isOutsizeClickHide() {
 
         boolean isOutsizeClickHide = false;
-        for (Map.Entry<Class<?>, DecorChildRecord> entry : mapViews.entrySet()) {
-
+        Map<Class<?>, DecorChildRecord> defaultMap = new HashMap<>();
+        defaultMap.putAll(mapViews);
+        ListIterator<Map.Entry<Class<?>, DecorChildRecord>> listIterator =
+                new ArrayList<>(defaultMap.entrySet()).listIterator(defaultMap.size());
+        while(listIterator.hasPrevious()) {
+            Map.Entry<Class<?>, DecorChildRecord> entry= listIterator.previous();
             DecorChildRecord record = entry.getValue();
             if(record.isOutsideClickHide && isPopupWindowShow(record.mCls)){
                 record.decorWindow.hidePopupWindow();
@@ -200,8 +199,10 @@ public class DecorChildView extends RelativeLayout implements IDecorWindow {
     }
 
     private boolean isOutsideCanTouchable() {
-
-        for (Map.Entry<Class<?>, DecorChildRecord> entry : mapViews.entrySet()) {
+        ListIterator<Map.Entry<Class<?>, DecorChildRecord>> listIterator =
+                new ArrayList<>(mapViews.entrySet()).listIterator(mapViews.size());
+        while(listIterator.hasPrevious()) {
+            Map.Entry<Class<?>, DecorChildRecord> entry= listIterator.previous();
             DecorChildRecord record = entry.getValue();
             if(!record.isOutsideCanTouch && isPopupWindowShow(record.mCls)){
                 return false;
@@ -214,6 +215,8 @@ public class DecorChildView extends RelativeLayout implements IDecorWindow {
     public boolean onTouchEvent(MotionEvent event) {
 
         boolean isTouch = super.onTouchEvent(event);
+        Map<Class<?>, DecorChildRecord> map = new HashMap<>();
+        map.putAll(mapViews);
         if(isOutsizeClickHide()){
             return true;
         }
