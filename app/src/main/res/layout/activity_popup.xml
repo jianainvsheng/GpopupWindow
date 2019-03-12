@@ -2,103 +2,168 @@
 <com.gome.widget.test.widget.TestLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     >
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onclick"
-        android:id="@+id/popup_top_right"
-        android:textSize="18dp"
-        android:textColor="#000000"
-        android:layout_alignParentRight="true"
-        android:layout_margin="20dp"
-        android:text="右上角"
-
-        />
-    <com.gome.widget.test.widget.TestLayout
-
-        android:id="@+id/test_layout1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="80dp"
-        >
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onclick"
-        android:id="@+id/popup"
-        android:textSize="18dp"
-        android:textColor="#000000"
-        android:text="popup"
-
-        />
-    </com.gome.widget.test.widget.TestLayout>
-
-    <com.gome.widget.test.widget.TestLayout
-
-        android:id="@+id/test_layout2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="30dp"
-        >
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/bottom"
-        android:textSize="18dp"
-        android:textColor="#000000"
-        android:onClick="onclick"
-        android:text="测试右popup"
-
-        />
-    </com.gome.widget.test.widget.TestLayout>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/bottom_right"
-        android:textSize="18dp"
-        android:textColor="#000000"
-        android:onClick="onclick"
-        android:text="测试右popup"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="30dp"
-        android:layout_alignParentRight="true"
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/center"
-        android:textSize="18dp"
-        android:textColor="#000000"
-        android:onClick="onclick"
-        android:text="测试中间popup"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/center_view"
-        android:textSize="18dp"
-        android:textColor="#000000"
-        android:onClick="onclick"
-        android:text="测试层级中间popup"
-        android:layout_below="@+id/center"
-        android:layout_marginTop="30dp"
-        android:layout_centerHorizontal="true"
-        />
-
-    <com.gome.widget.test.widget.TestLayout
-
-        android:id="@+id/test_layout3"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#00000000"
-        >
-    </com.gome.widget.test.widget.TestLayout>
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onclick"
+                android:id="@+id/popup_top_right"
+                android:textSize="18dp"
+                android:textColor="#000000"
+                android:layout_alignParentRight="true"
+                android:layout_margin="20dp"
+                android:text="右上角"
+
+                />
+            <com.gome.widget.test.widget.TestLayout
+
+                android:id="@+id/test_layout1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="80dp"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="onclick"
+                    android:id="@+id/popup"
+                    android:textSize="18dp"
+                    android:textColor="#000000"
+                    android:layout_marginLeft="150dp"
+                    android:text="popup"
+
+                    />
+            </com.gome.widget.test.widget.TestLayout>
+
+            <com.gome.widget.test.widget.TestLayout
+
+                android:id="@+id/test_layout2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="500dp"
+                android:layout_marginBottom="30dp"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bottom"
+                    android:textSize="18dp"
+                    android:textColor="#000000"
+                    android:onClick="onclick"
+                    android:text="测试右popup"
+
+                    />
+            </com.gome.widget.test.widget.TestLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/bottom_right"
+                android:textSize="18dp"
+                android:textColor="#000000"
+                android:onClick="onclick"
+                android:text="测试右popup"
+                android:layout_marginTop="500dp"
+                android:layout_marginBottom="30dp"
+                android:layout_alignParentRight="true"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/center"
+                android:textSize="18dp"
+                android:textColor="#000000"
+                android:onClick="onclick"
+                android:text="测试中间popup"
+                android:layout_marginTop="200dp"
+                android:layout_centerHorizontal="true"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/center_view"
+                android:textSize="18dp"
+                android:textColor="#000000"
+                android:onClick="onclick"
+                android:text="测试层级中间popup"
+                android:layout_below="@+id/center"
+                android:layout_marginTop="30dp"
+                android:layout_centerHorizontal="true"
+                />
+
+            <com.gome.widget.test.widget.TestLayout
+
+                android:id="@+id/test_layout3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#00000000"
+                >
+            </com.gome.widget.test.widget.TestLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_below="@+id/test_layout2"
+
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="sadsadsadas"
+                    android:textColor="#00ff00"
+                    android:textSize="14sp"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="sadsadsadas"
+                    android:textColor="#00ff00"
+                    android:textSize="14sp"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="sadsadsadas"
+                    android:textColor="#00ff00"
+                    android:textSize="14sp"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="sadsadsadas"
+                    android:textColor="#00ff00"
+                    android:textSize="14sp"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="sadsadsadas"
+                    android:textColor="#00ff00"
+                    android:textSize="14sp"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="sadsadsadas"
+                    android:textColor="#00ff00"
+                    android:textSize="14sp"
+                    />
+            </LinearLayout>
+        </RelativeLayout>
+    </ScrollView>
+
 </com.gome.widget.test.widget.TestLayout>

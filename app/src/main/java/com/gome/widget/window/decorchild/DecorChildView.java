@@ -33,6 +33,7 @@ public class DecorChildView extends RelativeLayout implements IDecorWindow {
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
         );
         setLayoutParams(params);
+        setFitsSystemWindows(true);
         this.mDecorView.addView(this, mDecorView.getChildCount());
         this.mDecorView.setTag(R.id.decor_view_window_id, this);
         this.setBackgroundColor(getResources().getColor(android.R.color.transparent));

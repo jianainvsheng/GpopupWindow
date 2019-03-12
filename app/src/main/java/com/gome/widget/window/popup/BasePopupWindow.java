@@ -2,9 +2,12 @@ package com.gome.widget.window.popup;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Rect;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.RelativeLayout;
 
 import com.gome.widget.R;
@@ -59,17 +62,17 @@ public class BasePopupWindow<B extends BasePopupBuilder<B>, H extends BasePopupH
             return;
         }
         int height = getCorrectionHeight(longitudinalView);
-        final int[] startPosition = new int[2];
-        longitudinalView.getLocationOnScreen(startPosition);
-        startPosition[1] = startPosition[1] - height <= 0 ? 0: startPosition[1] - height;
+        final Rect startPosition = new Rect();
+        longitudinalView.getGlobalVisibleRect(startPosition);
+        startPosition.top = startPosition.top - height <= 0 ? 0: startPosition.top - height;
         final View popupWindowView = this.mHelper.attachView(mBuilder, getDecorView(), this);
         if (popupWindowView == null) {
             throw new NullPointerException(this.getClass().getCanonicalName() + " 获取加载的popupWindwoView 为空");
         }
         final int viewWidth = longitudinalView.getMeasuredWidth();
-        final int[] endPosition = new int[2];
-        getDecorView().getLocationOnScreen(endPosition);
-        endPosition[1] = endPosition[1] - height <= 0 ? 0: endPosition[1] - height;
+        final Rect endPosition = new Rect();
+        getDecorView().getGlobalVisibleRect(endPosition);
+        endPosition.top = endPosition.top - height <= 0 ? 0: endPosition.top - height;
 
         WindowEnum windowEnum = mBuilder.getWindowEnum();
         windowEnum = windowEnum == null ? WindowEnum.WINDOW_LEFT : windowEnum;
@@ -80,19 +83,36 @@ public class BasePopupWindow<B extends BasePopupBuilder<B>, H extends BasePopupH
         popupWindowView.post(new Runnable() {
             @Override
             public void run() {
-                int longitudinalY = startPosition[1] + mBuilder.getOffY() + mHelper.postVectorY(BasePopupWindow.this,longitudinalView);
-                int longitudinalX = startPosition[0] + mBuilder.getOffX() + mHelper.postVectorX(BasePopupWindow.this,longitudinalView);
+                int longitudinalY = startPosition.top + mBuilder.getOffY() + mHelper.postVectorY(BasePopupWindow.this,longitudinalView);
+                int longitudinalX = startPosition.left + mBuilder.getOffX() + mHelper.postVectorX(BasePopupWindow.this,longitudinalView);
+                int maxWidthSize = mDecorWindow.getDecorView().getMeasuredWidth();
+                int contentViewWidthSize = mHelper.getContentView().getMeasuredWidth();
                 int popupWidth = popupWindowView.getMeasuredWidth();
                 if (wEnum == WindowEnum.WINDOW_LEFT) {
                     params.topMargin = longitudinalY;
                     params.leftMargin = longitudinalX;
+                    if(longitudinalX + contentViewWidthSize > maxWidthSize){
+
+                        int leftMargin = longitudinalX - (longitudinalX + contentViewWidthSize - maxWidthSize);
+                        params.leftMargin = leftMargin < 0 ? 0: leftMargin;
+                    }
                 } else if (wEnum == WindowEnum.WINDOW_CENTER) {
                     params.topMargin = longitudinalY;
-                    params.leftMargin = (longitudinalX > (popupWidth - viewWidth) / 2) ? longitudinalX - (popupWidth - viewWidth) / 2 : 0;
+                    params.leftMargin = longitudinalX - (popupWidth - viewWidth) / 2 < 0 ? 0 : longitudinalX - (popupWidth - viewWidth) / 2;
+
+                    if(params.leftMargin + contentViewWidthSize > maxWidthSize){
+
+                        int leftMargin = params.leftMargin - (params.leftMargin + contentViewWidthSize - maxWidthSize);
+                        params.leftMargin = leftMargin < 0 ? 0: leftMargin;
+                    }
 
                 } else if (wEnum == WindowEnum.WINDOW_RIGHT) {
                     params.topMargin = longitudinalY;
-                    params.leftMargin = longitudinalX + viewWidth - popupWidth < endPosition[0] ? endPosition[0] : longitudinalX + viewWidth - popupWidth;
+                    params.leftMargin = longitudinalX + viewWidth - popupWidth < endPosition.left ? endPosition.left : longitudinalX + viewWidth - popupWidth;
+                    if(params.leftMargin + contentViewWidthSize > maxWidthSize){
+                        int leftMargin = params.leftMargin - (params.leftMargin + contentViewWidthSize - maxWidthSize);
+                        params.leftMargin = leftMargin < 0 ? 0: leftMargin;
+                    }
                 }
                 popupWindowView.setLayoutParams(params);
                 mHelper.showPopupWindow(BasePopupWindow.this);
@@ -104,13 +124,22 @@ public class BasePopupWindow<B extends BasePopupBuilder<B>, H extends BasePopupH
     private int getCorrectionHeight(View view){
         int height = 0;
         Context context = view.getContext();
+        if(context instanceof Activity && mBuilder.isFitsSystemWindows()){
+            Activity activity = (Activity) context;
+            Window window = activity.getWindow();
+            View decorView = window.getDecorView();
+            int vis = decorView.getSystemUiVisibility();
+            if(vis != 0){
+                return -view.getMeasuredHeight();
+            }
+        }
+
         ViewGroup decorView = ((Activity)context).findViewById(android.R.id.content);
         if(context instanceof AppCompatActivity &&
                 decorView.getParent() != null &&
                 decorView.getParent() instanceof ViewGroup){
             ViewGroup viewGroup = (ViewGroup) decorView.getParent();
             for(int i = 0 ; i < decorView.getChildCount() ; i++){
-                //System.out.println("======= DecorChildView : " + viewGroup.getChildAt(i));
                 if(decorView != viewGroup.getChildAt(i)){
                     height += viewGroup.getChildAt(i).getMeasuredHeight();
                 }
@@ -118,6 +147,11 @@ public class BasePopupWindow<B extends BasePopupBuilder<B>, H extends BasePopupH
 
         }
         return height;
+    }
+
+    public int on(Context context,View anchor){
+
+        return context.getResources().getDisplayMetrics().heightPixels - anchor.getHeight();
     }
 
     @Override

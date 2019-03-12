@@ -26,9 +26,11 @@ public class BasePopupBuilder<B extends BasePopupBuilder<B>> {
 
     private boolean isOutCanTouch = true;
 
-    private boolean isOutClickHide = false;
+    private boolean isOutClickHide = true;
 
     private WindowEnum mWindowEnum = WindowEnum.WINDOW_LEFT;
+
+    public boolean isFitsSystemWindows = true;
 
     public B setData(Object data) {
         this.mData = data;
@@ -56,6 +58,11 @@ public class BasePopupBuilder<B extends BasePopupBuilder<B>> {
         return mLevel;
     }
 
+    public B setFitsSystemWindows(boolean fitsSystemWindows) {
+        isFitsSystemWindows = fitsSystemWindows;
+        return (B)this;
+    }
+
     public B setOffY(int offY) {
         this.offY = offY;
         return (B)this;
@@ -74,6 +81,10 @@ public class BasePopupBuilder<B extends BasePopupBuilder<B>> {
 
         this.isOutCanTouch = outCanTouch;
         return (B) this;
+    }
+
+    public boolean isFitsSystemWindows() {
+        return isFitsSystemWindows;
     }
 
     /**
