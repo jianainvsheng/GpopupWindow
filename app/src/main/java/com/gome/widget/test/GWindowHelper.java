@@ -126,10 +126,10 @@ public class GWindowHelper extends BasePopupHelper<BasePopupBuilder> {
     }
 
     @Override
-    public boolean onTouchableEvent(MotionEvent event) {
+    public boolean onTouchEvent(MotionEvent event) {
         //判断坐标是否落在view的下方
         if(getContentView() == null){
-            return super.onTouchableEvent(event);
+            return super.onTouchEvent(event);
         }
         final RelativeLayout.LayoutParams params =
                 (RelativeLayout.LayoutParams) getContentView().getLayoutParams();
@@ -139,6 +139,6 @@ public class GWindowHelper extends BasePopupHelper<BasePopupBuilder> {
             getBuilderData().getGPopupWindow().hidePopupWindow();
             return true;
         }
-        return super.onTouchableEvent(event);
+        return super.onTouchEvent(event);
     }
 }

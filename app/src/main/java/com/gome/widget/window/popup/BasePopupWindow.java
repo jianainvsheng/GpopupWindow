@@ -260,7 +260,7 @@ public class BasePopupWindow<B extends BasePopupBuilder<B>, H extends BasePopupH
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        return mHelper.onTouchableEvent(event);
+        return mHelper.onTouchEvent(event);
     }
 
     public boolean isPopupWindowShow() {

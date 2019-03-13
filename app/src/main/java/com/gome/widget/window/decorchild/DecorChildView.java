@@ -220,7 +220,7 @@ public class DecorChildView extends RelativeLayout implements IDecorWindow {
     private boolean isOutsideCanTouchable(MotionEvent event,DecorChildRecord record) {
 
         if(onChildTouchEvent(event,record) && isPopupWindowShow(record.mCls)){
-            return true;
+            return false;
         }
         if(!record.isOutsideCanTouch && isPopupWindowShow(record.mCls)){
             return false;

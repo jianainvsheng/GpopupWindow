@@ -105,8 +105,8 @@ public abstract class BasePopupHelper<B extends BasePopupBuilder> {
         return mContentView;
     }
 
-    public boolean onTouchableEvent(MotionEvent event) {
-        return true;
+    public boolean onTouchEvent(MotionEvent event) {
+        return false;
     }
 
 }
