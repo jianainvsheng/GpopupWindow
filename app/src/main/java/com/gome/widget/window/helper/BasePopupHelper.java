@@ -18,6 +18,8 @@ public abstract class BasePopupHelper<B extends BasePopupBuilder> {
 
     private View mContentView;
 
+    private @LayoutRes int mLayoutResId = -1;
+
     public View attachView(B builder, ViewGroup parentView,BasePopupWindow decorWindow) {
 
         if (builder == null) {
@@ -25,13 +27,17 @@ public abstract class BasePopupHelper<B extends BasePopupBuilder> {
         }
 
         this.mBuilder = builder;
+        if(mContentView != null && onCreateViewLayoutId() == mLayoutResId){
+            return mContentView;
+        }
         return onCreateView(parentView, builder,decorWindow);
     }
 
     View onCreateView(ViewGroup parentView, B builder,BasePopupWindow decorWindow){
 
+        this.mLayoutResId = onCreateViewLayoutId();
         mContentView = LayoutInflater.from(parentView.getContext())
-                .inflate(onCreateViewLayoutId() , parentView ,false);
+                .inflate(mLayoutResId , parentView ,false);
         onBuilder(mContentView,builder,decorWindow);
         return mContentView;
     }

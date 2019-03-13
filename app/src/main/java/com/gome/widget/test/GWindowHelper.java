@@ -65,7 +65,7 @@ public class GWindowHelper extends BasePopupHelper<BasePopupBuilder> {
     public void showPopupWindow(BasePopupWindow decorWindow) {
 
         final int height = contentView.getMeasuredHeight();
-        final int startY = (int) (- height + contentView.getY());
+        final int startY = - height;
         final int xoff = contentView.getMeasuredHeight();
         anim(contentView,startY,xoff,500);
     }
