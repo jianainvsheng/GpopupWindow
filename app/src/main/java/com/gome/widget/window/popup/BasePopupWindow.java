@@ -5,8 +5,10 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.RelativeLayout;
 
@@ -22,13 +24,17 @@ import com.gome.widget.window.windowenum.WindowEnum;
  */
 
 public class BasePopupWindow<B extends BasePopupBuilder<B>, H extends BasePopupHelper<B>>
-        implements IDecorWindow {
+        implements IDecorWindow,ViewTreeObserver.OnScrollChangedListener {
 
     private IDecorWindow mDecorWindow;
 
     private B mBuilder;
 
     private H mHelper;
+
+    private View mlongitudinalView;
+
+    int y = 0;
 
     public BasePopupWindow(Context context, B builder, H helper) {
 
@@ -79,46 +85,67 @@ public class BasePopupWindow<B extends BasePopupBuilder<B>, H extends BasePopupH
         final WindowEnum wEnum = windowEnum;
         popupWindowView.setVisibility(View.INVISIBLE);
         showPopupWindow(popupWindowView, mHelper.getClass(), level,this);
-        final RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) popupWindowView.getLayoutParams();
         popupWindowView.post(new Runnable() {
             @Override
             public void run() {
-                int longitudinalY = startPosition.top + mBuilder.getOffY() + mHelper.postVectorY(BasePopupWindow.this,longitudinalView);
-                int longitudinalX = startPosition.left + mBuilder.getOffX() + mHelper.postVectorX(BasePopupWindow.this,longitudinalView);
-                int maxWidthSize = mDecorWindow.getDecorView().getMeasuredWidth();
-                int contentViewWidthSize = mHelper.getContentView().getMeasuredWidth();
-                int popupWidth = popupWindowView.getMeasuredWidth();
-                if (wEnum == WindowEnum.WINDOW_LEFT) {
-                    params.topMargin = longitudinalY;
-                    params.leftMargin = longitudinalX;
-                    if(longitudinalX + contentViewWidthSize > maxWidthSize){
-
-                        int leftMargin = longitudinalX - (longitudinalX + contentViewWidthSize - maxWidthSize);
-                        params.leftMargin = leftMargin < 0 ? 0: leftMargin;
-                    }
-                } else if (wEnum == WindowEnum.WINDOW_CENTER) {
-                    params.topMargin = longitudinalY;
-                    params.leftMargin = longitudinalX - (popupWidth - viewWidth) / 2 < 0 ? 0 : longitudinalX - (popupWidth - viewWidth) / 2;
-
-                    if(params.leftMargin + contentViewWidthSize > maxWidthSize){
-
-                        int leftMargin = params.leftMargin - (params.leftMargin + contentViewWidthSize - maxWidthSize);
-                        params.leftMargin = leftMargin < 0 ? 0: leftMargin;
-                    }
-
-                } else if (wEnum == WindowEnum.WINDOW_RIGHT) {
-                    params.topMargin = longitudinalY;
-                    params.leftMargin = longitudinalX + viewWidth - popupWidth < endPosition.left ? endPosition.left : longitudinalX + viewWidth - popupWidth;
-                    if(params.leftMargin + contentViewWidthSize > maxWidthSize){
-                        int leftMargin = params.leftMargin - (params.leftMargin + contentViewWidthSize - maxWidthSize);
-                        params.leftMargin = leftMargin < 0 ? 0: leftMargin;
-                    }
-                }
-                popupWindowView.setLayoutParams(params);
+                setGlobalLayout(longitudinalView,popupWindowView,startPosition,endPosition,viewWidth,wEnum);
                 mHelper.showPopupWindow(BasePopupWindow.this);
                 popupWindowView.setVisibility(View.VISIBLE);
+                showLongitudinalView(longitudinalView);
             }
         });
+    }
+
+
+    private void setGlobalLayout(View longitudinalView,View popupWindowView , Rect startPosition,Rect endPosition,int viewWidth,WindowEnum wEnum){
+
+        final RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) popupWindowView.getLayoutParams();
+        int longitudinalY = startPosition.top + mBuilder.getOffY() + mHelper.postVectorY(BasePopupWindow.this,longitudinalView);
+        int longitudinalX = startPosition.left + mBuilder.getOffX() + mHelper.postVectorX(BasePopupWindow.this,longitudinalView);
+        int maxWidthSize = mDecorWindow.getDecorView().getMeasuredWidth();
+        int contentViewWidthSize = mHelper.getContentView().getMeasuredWidth();
+        int popupWidth = popupWindowView.getMeasuredWidth();
+        System.out.println("================onScrollChanged longitudinalY.top = " + longitudinalY);
+        if (wEnum == WindowEnum.WINDOW_LEFT) {
+            params.topMargin = longitudinalY;
+            params.leftMargin = longitudinalX;
+            if(longitudinalX + contentViewWidthSize > maxWidthSize){
+
+                int leftMargin = longitudinalX - (longitudinalX + contentViewWidthSize - maxWidthSize);
+                params.leftMargin = leftMargin < 0 ? 0: leftMargin;
+            }
+        } else if (wEnum == WindowEnum.WINDOW_CENTER) {
+            params.topMargin = longitudinalY;
+            params.leftMargin = longitudinalX - (popupWidth - viewWidth) / 2 < 0 ? 0 : longitudinalX - (popupWidth - viewWidth) / 2;
+            if(params.leftMargin + contentViewWidthSize > maxWidthSize){
+                int leftMargin = params.leftMargin - (params.leftMargin + contentViewWidthSize - maxWidthSize);
+                params.leftMargin = leftMargin < 0 ? 0: leftMargin;
+            }
+
+        } else if (wEnum == WindowEnum.WINDOW_RIGHT) {
+            params.topMargin = longitudinalY;
+            params.leftMargin = longitudinalX + viewWidth - popupWidth < endPosition.left ? endPosition.left : longitudinalX + viewWidth - popupWidth;
+            if(params.leftMargin + contentViewWidthSize > maxWidthSize){
+                int leftMargin = params.leftMargin - (params.leftMargin + contentViewWidthSize - maxWidthSize);
+                params.leftMargin = leftMargin < 0 ? 0: leftMargin;
+            }
+        }
+        popupWindowView.setLayoutParams(params);
+    }
+
+    private void showLongitudinalView(View longitudinalView){
+
+        mlongitudinalView = longitudinalView;
+        mlongitudinalView.getViewTreeObserver().addOnScrollChangedListener(this);
+    }
+
+    private void hideLongitudinalView(){
+
+        if(mlongitudinalView != null){
+
+            mlongitudinalView.getViewTreeObserver().removeOnScrollChangedListener(this);
+        }
+        mlongitudinalView = null;
     }
 
     private int getCorrectionHeight(View view){
@@ -162,7 +189,6 @@ public class BasePopupWindow<B extends BasePopupBuilder<B>, H extends BasePopupH
 
     @Override
     public void hidePopupWindow(final Class<?> cls) {
-
         if (mHelper != null && mHelper.canNotHidePopupWindow()) {
             return;
         }
@@ -173,10 +199,12 @@ public class BasePopupWindow<B extends BasePopupBuilder<B>, H extends BasePopupH
                     @Override
                     public void run() {
                         mDecorWindow.hidePopupWindow(cls);
+                        hideLongitudinalView();
                     }
                 }, duration);
             } else {
                 mDecorWindow.hidePopupWindow(cls);
+                hideLongitudinalView();
             }
         }
     }
@@ -230,6 +258,11 @@ public class BasePopupWindow<B extends BasePopupBuilder<B>, H extends BasePopupH
         this.mDecorWindow.setOutsideClickHide(outClickHide,cls);
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return mHelper.onTouchableEvent(event);
+    }
+
     public boolean isPopupWindowShow() {
         return isPopupWindowShow(mHelper.getClass());
     }
@@ -243,5 +276,29 @@ public class BasePopupWindow<B extends BasePopupBuilder<B>, H extends BasePopupH
         } else {
             return (IDecorWindow) decorObject;
         }
+    }
+
+    @Override
+    public void onScrollChanged() {
+        if(mlongitudinalView == null || !isPopupWindowShow()){
+            return;
+        }
+        int height = getCorrectionHeight(mlongitudinalView);
+        final Rect startPosition = new Rect();
+        mlongitudinalView.getGlobalVisibleRect(startPosition);
+        startPosition.top = startPosition.top - height <= 0 ? 0: startPosition.top - height;
+        final View popupWindowView = this.mHelper.attachView(mBuilder, getDecorView(), this);
+        if (popupWindowView == null) {
+            throw new NullPointerException(this.getClass().getCanonicalName() + " 获取加载的popupWindwoView 为空");
+        }
+        final int viewWidth = mlongitudinalView.getMeasuredWidth();
+        final Rect endPosition = new Rect();
+        getDecorView().getGlobalVisibleRect(endPosition);
+        endPosition.top = endPosition.top - height <= 0 ? 0: endPosition.top - height;
+
+        WindowEnum windowEnum = mBuilder.getWindowEnum();
+        windowEnum = windowEnum == null ? WindowEnum.WINDOW_LEFT : windowEnum;
+        final WindowEnum wEnum = windowEnum;
+        setGlobalLayout(mlongitudinalView,popupWindowView,startPosition,endPosition,viewWidth,wEnum);
     }
 }

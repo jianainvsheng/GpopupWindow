@@ -1,5 +1,6 @@
 package com.gome.widget.window;
 
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -76,5 +77,12 @@ public interface IDecorWindow {
      * @param cls
      */
     void setOutsideClickHide(boolean outClickHide ,Class<?> cls);
+
+    /**
+     * 事件分发
+     * @param event
+     * @return
+     */
+    boolean onTouchEvent(MotionEvent event);
 
 }

@@ -1,7 +1,10 @@
 package com.gome.widget.test;
 
 import android.animation.ValueAnimator;
+import android.graphics.Rect;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.RelativeLayout;
 
 import com.gome.widget.R;
 import com.gome.widget.window.builder.BasePopupBuilder;
@@ -13,7 +16,6 @@ import com.gome.widget.window.popup.BasePopupWindow;
  */
 
 public class GWindowHelper extends BasePopupHelper<BasePopupBuilder> {
-
 
     private View contentView;
 
@@ -121,5 +123,22 @@ public class GWindowHelper extends BasePopupHelper<BasePopupBuilder> {
             }
         });
         animator.start();
+    }
+
+    @Override
+    public boolean onTouchableEvent(MotionEvent event) {
+        //判断坐标是否落在view的下方
+        if(getContentView() == null){
+            return super.onTouchableEvent(event);
+        }
+        final RelativeLayout.LayoutParams params =
+                (RelativeLayout.LayoutParams) getContentView().getLayoutParams();
+        int bottom = params.topMargin + getContentView().findViewById(R.id.content_view).getMeasuredHeight();
+        int pointY = (int) event.getY();
+        if(pointY > bottom){
+            getBuilderData().getGPopupWindow().hidePopupWindow();
+            return true;
+        }
+        return super.onTouchableEvent(event);
     }
 }

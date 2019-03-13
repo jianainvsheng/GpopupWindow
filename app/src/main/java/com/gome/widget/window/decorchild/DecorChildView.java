@@ -181,9 +181,8 @@ public class DecorChildView extends RelativeLayout implements IDecorWindow {
         }
     }
 
-    private boolean isOutsizeClickHide() {
-
-        boolean isOutsizeClickHide = false;
+    private boolean isOutsizeCanTouch(MotionEvent event) {
+        boolean isOutsizeCanTouch = true;
         Map<Class<?>, DecorChildRecord> defaultMap = new HashMap<>();
         defaultMap.putAll(mapViews);
         ListIterator<Map.Entry<Class<?>, DecorChildRecord>> listIterator =
@@ -193,38 +192,60 @@ public class DecorChildView extends RelativeLayout implements IDecorWindow {
             DecorChildRecord record = entry.getValue();
             if(record.isOutsideClickHide && isPopupWindowShow(record.mCls)){
                 record.decorWindow.hidePopupWindow();
-                isOutsizeClickHide = true;
+                isOutsizeCanTouch = false;
+            }
+            if(!isOutsideCanTouchable(event,record) && isOutsizeCanTouch){
+                isOutsizeCanTouch = false;
             }
         }
-        return isOutsizeClickHide;
+        return isOutsizeCanTouch;
     }
 
-    private boolean isOutsideCanTouchable() {
-        ListIterator<Map.Entry<Class<?>, DecorChildRecord>> listIterator =
-                new ArrayList<>(mapViews.entrySet()).listIterator(mapViews.size());
-        while(listIterator.hasPrevious()) {
-            Map.Entry<Class<?>, DecorChildRecord> entry= listIterator.previous();
-            DecorChildRecord record = entry.getValue();
-            if(!record.isOutsideCanTouch && isPopupWindowShow(record.mCls)){
-                return false;
-            }
+//    private boolean isOutsideCanTouchable(MotionEvent event) {
+//        ListIterator<Map.Entry<Class<?>, DecorChildRecord>> listIterator =
+//                new ArrayList<>(mapViews.entrySet()).listIterator(mapViews.size());
+//        while(listIterator.hasPrevious()) {
+//            Map.Entry<Class<?>, DecorChildRecord> entry= listIterator.previous();
+//            DecorChildRecord record = entry.getValue();
+//            if(onChildTouchEvent(event,record) && isPopupWindowShow(record.mCls)){
+//                return true;
+//            }
+//            if(!record.isOutsideCanTouch && isPopupWindowShow(record.mCls)){
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
+
+    private boolean isOutsideCanTouchable(MotionEvent event,DecorChildRecord record) {
+
+        if(onChildTouchEvent(event,record) && isPopupWindowShow(record.mCls)){
+            return true;
+        }
+        if(!record.isOutsideCanTouch && isPopupWindowShow(record.mCls)){
+            return false;
         }
         return true;
+    }
+
+    private boolean onChildTouchEvent(MotionEvent event,DecorChildRecord record){
+
+        if(record.decorWindow == null){
+           throw new NullPointerException("没有存入decorWindow 信息");
+        }
+        return record.decorWindow.onTouchEvent(event);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
         boolean isTouch = super.onTouchEvent(event);
-        Map<Class<?>, DecorChildRecord> map = new HashMap<>();
-        map.putAll(mapViews);
-        if(isOutsizeClickHide()){
+        if(!isOutsizeCanTouch(event)){
             return true;
         }
-        if(!isOutsideCanTouchable()){
-
-            return true;
-        }
+//        if(!isOutsideCanTouchable(event)){
+//            return true;
+//        }
         return isTouch;
     }
 

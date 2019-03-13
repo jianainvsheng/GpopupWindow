@@ -26,7 +26,7 @@ public class BasePopupBuilder<B extends BasePopupBuilder<B>> {
 
     private boolean isOutCanTouch = true;
 
-    private boolean isOutClickHide = true;
+    private boolean isOutClickHide = false;
 
     private WindowEnum mWindowEnum = WindowEnum.WINDOW_LEFT;
 
@@ -135,5 +135,10 @@ public class BasePopupBuilder<B extends BasePopupBuilder<B>> {
     public void attach(BasePopupWindow popupWindow) {
 
         this.mPopupWindow = popupWindow;
+    }
+
+    public BasePopupWindow getGPopupWindow(){
+
+        return mPopupWindow;
     }
 }

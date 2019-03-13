@@ -1,10 +1,9 @@
 package com.gome.widget.window.helper;
-
 import android.support.annotation.LayoutRes;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.gome.widget.window.builder.BasePopupBuilder;
 import com.gome.widget.window.popup.BasePopupWindow;
 
@@ -106,5 +105,8 @@ public abstract class BasePopupHelper<B extends BasePopupBuilder> {
         return mContentView;
     }
 
+    public boolean onTouchableEvent(MotionEvent event) {
+        return true;
+    }
 
 }
