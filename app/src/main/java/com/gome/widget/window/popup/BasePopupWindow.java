@@ -160,11 +160,13 @@ public class BasePopupWindow<B extends BasePopupBuilder<B>, H extends BasePopupH
                 return -view.getMeasuredHeight();
             }
         }
+        if(context instanceof AppCompatActivity){
+            ViewGroup decorView = ((AppCompatActivity)context).findViewById(android.R.id.content);
+            if( decorView.getParent() == null ||
+                    !(decorView.getParent() instanceof ViewGroup)){
 
-        ViewGroup decorView = ((Activity)context).findViewById(android.R.id.content);
-        if(context instanceof AppCompatActivity &&
-                decorView.getParent() != null &&
-                decorView.getParent() instanceof ViewGroup){
+                return height;
+            }
             ViewGroup viewGroup = (ViewGroup) decorView.getParent();
             for(int i = 0 ; i < decorView.getChildCount() ; i++){
                 if(decorView != viewGroup.getChildAt(i)){
@@ -175,6 +177,7 @@ public class BasePopupWindow<B extends BasePopupBuilder<B>, H extends BasePopupH
         }
         return height;
     }
+
 
     public int on(Context context,View anchor){
 
